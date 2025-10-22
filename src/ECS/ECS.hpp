@@ -8,6 +8,7 @@
 #include <bitset>
 #include <cstddef>
 #include <type_traits>
+#include <cassert>
 
 namespace ECS {
 
@@ -42,11 +43,11 @@ namespace ECS {
 	struct Component {
 		Entity* entity;
 		
-		virtual void init();
-		virtual void update(float mFT);
-		virtual void draw();
+		virtual void init() {};
+		virtual void update(float mFT) {};
+		virtual void draw() {};
 		
-		virtual ~Component();
+		virtual ~Component() {};
 	};
 	
 	class Entity {
@@ -101,7 +102,7 @@ namespace ECS {
 			
 			template<typename T> T& getComponent() const 
 			{
-				assert(!hasComponent<T>());
+				assert(hasComponent<T>());
 				auto ptr(componentArray[getComponentTypeID<T>()]);
 				return *reinterpret_cast<T*>(ptr);
 			}

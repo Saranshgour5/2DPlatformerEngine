@@ -1,7 +1,8 @@
-#ifndef GAME_H
-#define GAME_H
+#ifndef GAME_HPP
+#define GAME_HPP
 
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_events.h>
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_video.h>
 #include <iostream>
@@ -19,10 +20,11 @@ public:
 	bool running() { return isRunning; }
 	void render();
 	void clean();
-
+	
+	static inline bool isRunning { false };
+	static SDL_Event event;
 	static SDL_Renderer* renderer;
 private: 
-	bool isRunning { false };
 	int cnt {0};
 	SDL_Window* window;
 };

@@ -1,8 +1,10 @@
 #include "Game.hpp"
+#include "ECS/ECS.hpp"
 #include "TextureManager.hpp"
-#include <SDL2/SDL_render.h>
+#include "ECS/Components.hpp"
 
 SDL_Renderer* Game::renderer { nullptr };
+SDL_Event Game::event {};
 
 Game::Game() 
 	{ }
@@ -11,6 +13,8 @@ Game::~Game()
 	{ }
 
 SDL_Texture* ground {};
+ECS::Manager manager {};
+auto& player{ manager.addEntity() };
 
 void Game::init(const char* title, int width, int height, bool fullScreen)
 {
@@ -32,13 +36,16 @@ void Game::init(const char* title, int width, int height, bool fullScreen)
 		isRunning = true;
 	}
 
+	player.addComponent<TransformComponent>();
+	player.addComponent<KeyboardController>();
+	player.addComponent<SpriteComponent>();
+
 	ground = TextureManager::LoadTexture("assets/ground.jpg");
 }
 
 
 void Game::handleEvents() 
 {
-	SDL_Event event {};
 	SDL_PollEvent(&event);
 
 	switch (event.type) {
@@ -51,7 +58,10 @@ void Game::handleEvents()
 }
 
 void Game::update() 
-{ }
+{
+	manager.refresh();
+	manager.update(1.0f);
+}
 
 void Game::render()
 {
@@ -59,6 +69,7 @@ void Game::render()
 	SDL_Rect src {0, 0, 32, 32};
 	SDL_Rect dest {100, 100, 32, 32};
 	TextureManager::Draw(ground, src, dest);
+	manager.draw();
 	SDL_RenderPresent(renderer);
 }
 
