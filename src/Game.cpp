@@ -2,6 +2,7 @@
 #include "ECS/ECS.hpp"
 #include "TextureManager.hpp"
 #include "ECS/Components.hpp"
+#include "Map.hpp"
 
 SDL_Renderer* Game::renderer { nullptr };
 SDL_Event Game::event {};
@@ -12,6 +13,7 @@ Game::Game()
 Game::~Game()
 	{ }
 
+Map* map {};
 SDL_Texture* ground {};
 ECS::Manager manager {};
 auto& player{ manager.addEntity() };
@@ -35,7 +37,9 @@ void Game::init(const char* title, int width, int height, bool fullScreen)
 
 		isRunning = true;
 	}
-
+	
+	map = new Map(1, 32);
+	map->LoadMap("assets/tileMap.map", 30, 20);
 	player.addComponent<TransformComponent>();
 	player.addComponent<KeyboardController>();
 	player.addComponent<SpriteComponent>();
