@@ -124,7 +124,7 @@ namespace ECS {
 				groupedEntities[mGroup].emplace_back(mEntity);
 			}
 			
-			std::vector<Entity*> getEntitiesByGroup(Group mGroup)
+			std::vector<Entity*>& getEntitiesByGroup(Group mGroup)
 			{
 				return groupedEntities[mGroup];
 			}

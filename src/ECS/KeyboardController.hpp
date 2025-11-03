@@ -8,7 +8,7 @@ class KeyboardController : public ECS::Component
 {
 public:
 	TransformComponent *transform;
-
+	bool isGrounded = true;
 	void init() override
 	{
 		transform = &entity->getComponent<TransformComponent>();
@@ -21,15 +21,18 @@ public:
 			switch (Game::event.key.keysym.sym)
 			{
 			case SDLK_w:
-				transform->velocity.y = -1 * mFT;
+				if(isGrounded) {
+					transform->velocity.y = -32 * mFT;
+					isGrounded = false;
+				}
 				std::cout << "Pressing w" << std::endl;
 				break;
 			case SDLK_a:
-				transform->velocity.x = -1 * mFT;
+				transform->velocity.x = -16 * mFT;
 				std::cout << "Pressing a" << std::endl;
 				break;
 			case SDLK_d:
-				transform->velocity.x = 1 * mFT;
+				transform->velocity.x = 16 * mFT;
 				break;
 			case SDLK_s:
 				transform->velocity.y = 1 * mFT;
@@ -44,6 +47,7 @@ public:
 			switch (Game::event.key.keysym.sym)
 			{
 			case SDLK_w:
+				std::cout << "left w" << std::endl;
 				transform->velocity.y = 0;
 				break;
 			case SDLK_a:

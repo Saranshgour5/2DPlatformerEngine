@@ -5,6 +5,7 @@
 #include <SDL2/SDL_events.h>
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_video.h>
+#include <cstddef>
 #include <iostream>
 
 class Game 
@@ -24,6 +25,14 @@ public:
 	static inline bool isRunning { false };
 	static SDL_Event event;
 	static SDL_Renderer* renderer;
+
+	enum class groupLabels: std::size_t
+	{
+		Maps,
+		Players,
+		Colliders
+	};
+
 private: 
 	int cnt {0};
 	SDL_Window* window;

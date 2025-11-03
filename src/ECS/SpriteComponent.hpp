@@ -5,6 +5,7 @@
 #include "TransformComponent.hpp"
 #include "../TextureManager.hpp"
 #include <SDL2/SDL_rect.h>
+#include <string_view>
 
 class SpriteComponent: public ECS::Component 
 {
@@ -12,16 +13,18 @@ private:
 	TransformComponent* transform {};
 	SDL_Texture* texture {};
 	SDL_Rect src {}, dest {};
-
+	std::string_view path;
 public:
-	SpriteComponent() = default;
+	SpriteComponent(std::string_view mPath)
+	: path(mPath) { } 
+	
 
 	void init() override 
 	{
 		transform = &entity->getComponent<TransformComponent>();
 		src.x = 0, src.y = 0;
 		src.w = transform->width, src.h = transform->height;
-		texture = TextureManager::LoadTexture("assets/ground.jpg");
+		texture = TextureManager::LoadTexture(path.data());
 	}
 
 	void update(float mFT) override

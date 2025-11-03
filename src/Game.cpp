@@ -3,6 +3,9 @@
 #include "TextureManager.hpp"
 #include "ECS/Components.hpp"
 #include "Map.hpp"
+#include <cstddef>
+
+#include "PlayerPhysicsResolver.hpp"
 
 SDL_Renderer* Game::renderer { nullptr };
 SDL_Event Game::event {};
@@ -14,10 +17,15 @@ Game::~Game()
 	{ }
 
 Map* map {};
-SDL_Texture* ground {};
 ECS::Manager manager {};
 auto& player{ manager.addEntity() };
 
+auto& tiles(manager.getEntitiesByGroup(static_cast<int>(Game::groupLabels::Maps)));
+auto& players(manager.getEntitiesByGroup(static_cast<int>(Game::groupLabels::Players)));
+
+auto& colliders(manager.getEntitiesByGroup(static_cast<std::size_t>(Game::groupLabels::Colliders)));
+
+PlayerPhysicsResolver* physicsResolver = new PlayerPhysicsResolver();
 void Game::init(const char* title, int width, int height, bool fullScreen)
 {
 	int flags {};
@@ -40,11 +48,12 @@ void Game::init(const char* title, int width, int height, bool fullScreen)
 	
 	map = new Map(1, 32);
 	map->LoadMap("assets/tileMap.map", 30, 20);
-	player.addComponent<TransformComponent>();
+	player.addComponent<TransformComponent>(100, 100);
+	player.addComponent<SpriteComponent>("assets/player.png");
+	player.addComponent<ColliderComponent>();
+	player.addComponent<PhysicsComponent2>(manager, physicsResolver); 
 	player.addComponent<KeyboardController>();
-	player.addComponent<SpriteComponent>();
-
-	ground = TextureManager::LoadTexture("assets/ground.jpg");
+	player.addGroup(static_cast<std::size_t>(groupLabels::Players));
 }
 
 
@@ -70,10 +79,18 @@ void Game::update()
 void Game::render()
 {
 	SDL_RenderClear(renderer);
-	SDL_Rect src {0, 0, 32, 32};
-	SDL_Rect dest {100, 100, 32, 32};
-	TextureManager::Draw(ground, src, dest);
-	manager.draw();
+	for(auto& t : tiles)
+	{
+		t->draw(); 
+	}
+	for(auto& p: players)
+	{
+		p->draw();
+	}
+	for(auto& c: colliders)
+	{
+		c->draw();
+	}
 	SDL_RenderPresent(renderer);
 }
 
